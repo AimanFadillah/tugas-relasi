@@ -1,5 +1,6 @@
 import Computer from "../model/computer.js";
 import User from "../model/user.js";
+import Valindasi from "../traits/valindasi.js";
 
 class ComputerCont {
 
@@ -14,6 +15,14 @@ class ComputerCont {
     }
 
     static async store (req,res) {
+        const required = ["name"]
+        const dataBody = req.body;
+
+        if(Valindasi.bodyRequired(dataBody,required)) return res.json(Valindasi.bodyRequired(dataBody,required));
+        if(Valindasi.bodyNull(dataBody)) return res.json(Valindasi.bodyRequired(dataBody));
+
+        return res.json("gagal");
+
         const data = await Computer.create(req.body);
         return res.json(data);
     }   

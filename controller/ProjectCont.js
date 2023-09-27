@@ -1,5 +1,4 @@
 import Project from "../model/project.js";
-import DeptProj from "../model/deptproj.js";
 import Departement from "../model/departement.js";
 
 class ProjectCont {
@@ -16,8 +15,10 @@ class ProjectCont {
 
     static async store (req,res) {
         const project = await Project.create(req.body);
-        const departement = await Departement.findOne({where:{id:1}});
-        await project.addDepartement(departement);
+        if(req.body.departement_id){
+            const departement = await Departement.findOne({where:{id:req.body.departement_id}});
+            await project.addDepartement(departement);
+        }
         return res.json(project);
     }   
 
@@ -28,8 +29,8 @@ class ProjectCont {
 
     static async destroy (req,res) {
         const project = await Project.findOne({where:{id:req.params.id}});
-        const departement = await Departement.findOne({where:{id:1}});
-        await project.removeDepartement(departement);
+        // const departement = await Departement.findOne({where:{id:1}});
+        // await project.removeDepartement(departement);
         await Project.destroy({where:{id:req.params.id}});
         return res.json("success");
     }
