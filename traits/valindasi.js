@@ -1,3 +1,5 @@
+import Joi from "joi";
+
 class Valindasi {
 
     static bodyNull (body = {}) {
@@ -11,9 +13,17 @@ class Valindasi {
         return check;
     }
 
-    static bodyRequired (body = {},required = []) {
+    static joiMsg (valindasi) {
+        return valindasi.error.details[0].message.replace(/"/g,"");
+    }
 
-        return check;
+    static valindasiData (rules,body){
+        let pesan = false;
+        const validatedData = Joi.object(rules).validate(body);
+        if(!body) return pesan = "Tidak ada data";
+        if(validatedData.error) return pesan = Valindasi.joiMsg(validatedData);
+        if(Valindasi.bodyNull(body)) return pesan = Valindasi.bodyRequired(body);
+        return pesan;
     }
 
 }

@@ -1,7 +1,15 @@
 import Departement from "../model/departement.js";
 import User from "../model/user.js";
+import Joi from "joi";
+import Valindasi from "../traits/valindasi.js";
 
 class UserCont {
+
+    static rules = {
+        name:Joi.required(),
+        nik:Joi.required(),
+        departement_id:Joi.required(),
+    }
 
     static async index (req,res) {
         const data = await User.findAll();
@@ -14,12 +22,20 @@ class UserCont {
     }
 
     static async store (req,res) {
-        const data = await User.create(req.body);
+        const dataBody = req.body;
+        const validatedData = Valindasi.valindasiData(UserCont.rules,dataBody);
+        if(validatedData) return res.json(validatedData);
+
+        const data = await User.create(dataBody);
         return res.json(data);
     }   
 
     static async update (req,res){
-        const data = await User.update(req.body,{where:{id:req.params.id}});
+        const dataBody = req.body;
+        const validatedData = Valindasi.valindasiData(UserCont.rules,dataBody);
+        if(validatedData) return res.json(validatedData);
+
+        const data = await User.update(dataBody,{where:{id:req.params.id}});
         return res.json("success");
     }
 

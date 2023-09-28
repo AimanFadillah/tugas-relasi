@@ -1,7 +1,16 @@
 import Project from "../model/project.js";
 import Departement from "../model/departement.js";
+import Joi from "joi";
+import Valindasi from "../traits/valindasi.js";
 
 class ProjectCont {
+
+    static rules = {
+        head:Joi.required(),
+        name:Joi.required(),
+        description:Joi.required(),
+        departement_id:Joi.allow(null),
+    }
 
     static async index (req,res) {
         const data = await Project.findAll();
@@ -14,7 +23,12 @@ class ProjectCont {
     }
 
     static async store (req,res) {
-        const project = await Project.create(req.body);
+        const dataBody = req.body;
+        const validatedData = Valindasi.valindasiData(ProjectCont.rules,dataBody);
+
+        if(validatedData) return res.json(validatedData);
+
+        const project = await Project.create(dataBody);
         if(req.body.departement_id){
             const departement = await Departement.findOne({where:{id:req.body.departement_id}});
             await project.addDepartement(departement);
@@ -29,8 +43,6 @@ class ProjectCont {
 
     static async destroy (req,res) {
         const project = await Project.findOne({where:{id:req.params.id}});
-        // const departement = await Departement.findOne({where:{id:1}});
-        // await project.removeDepartement(departement);
         await Project.destroy({where:{id:req.params.id}});
         return res.json("success");
     }

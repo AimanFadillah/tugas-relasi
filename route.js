@@ -6,7 +6,7 @@ import ComputerCont from "./controller/ComputerCont.js";
 
 const Route = express.Router();
 
-Route.get("/",DepartementCont.index);
+Route.get("/departement",DepartementCont.index);
 Route.get("/departement/:id",DepartementCont.show);
 Route.post("/departement",DepartementCont.store);
 Route.put("/departement/:id",DepartementCont.update);
